@@ -44,8 +44,9 @@ src/beautify.py  排版层：样式套用、清空白行、TOC 域、页边距�
 src/cli.py       命令行入口
 src/gui.py       图形界面（tkinter，支持拖拽）
 tests/           结构校验 + GUI 冒烟测试
-需求说明.md / 实施方案.md / 执行进度.md   三文档驱动
 ```
+
+> 需求 / 方案 / 进度三份过程文档已移出仓库，收在个人知识库 `4-项目/14-剧本双语拆分工具/`；本仓库只保留代码与本说明。
 
 **分层铁律**：`core.py` / `styles.py` / `beautify.py` 都不 import tkinter（保证 CLI 与无头环境可用）。
 
