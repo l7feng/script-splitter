@@ -22,7 +22,7 @@ DIST = os.path.join(EXE_ROOT, 'script-splitter-v%s-%s' % (VERSION, DATE))
 WORK = os.path.join(ROOT, 'build', 'work')
 SPEC = os.path.join(ROOT, 'build')
 
-NAME = '剧本双语拆分工具'
+NAME = 'script-splitter'  # 2026-09-27 由「剧本双语拆分工具」改英文：上 GitHub 需全 ASCII；GUI 标题仍为中文
 ENTRY = os.path.join(ROOT, 'src', 'gui.py')
 
 
