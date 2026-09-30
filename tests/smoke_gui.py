@@ -2,7 +2,7 @@
 """GUI 冒烟测试：构建界面、走一遍控件，不实际执行拆分。
 
 用打包环境的 Python 跑（托管 Python 3.13 没有 tkinter）：
-    D:\\My-Temporary\\pt-build-env\\Scripts\\python.exe tests\\smoke_gui.py
+    D:\\Ai-Files\\Agent-Preset\\pt-build-env\\Scripts\\python.exe tests\\smoke_gui.py
 """
 import os
 import sys
@@ -37,8 +37,17 @@ def main():
     app.log_line('冒烟测试：日志控件正常')
     root.update_idletasks()
 
+    # 设置面板构建冒烟（S2：界面模式 swatch 行 + 强调色 swatch 行）
+    app._open_settings()
+    dlgs = [w for w in root.winfo_children() if w.winfo_class() == 'Toplevel']
+    assert dlgs, '设置面板必须能构建'
+    for d in dlgs:
+        d.destroy()
+    root.update_idletasks()
+    print('设置面板构建冒烟通过')
+
     # 模拟载入文件后的输出目录推导
-    sample = r'D:\My-Temporary\《Falcão的90日新娘》删减标注版v6.docx'
+    sample = r'D:\Ai-Files\\Agent-Preset\《Falcão的90日新娘》删减标注版v6.docx'
     out = app._default_out(sample)
     print('推导输出目录:', out)
     assert out.endswith('_split')

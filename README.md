@@ -53,7 +53,7 @@ tests/           结构校验 + GUI 冒烟测试
 ## 构建 exe
 
 ```bash
-D:\My-Temporary\pt-build-env\Scripts\python.exe build_exe.py
+D:\Ai-Files\Agent-Preset\build-env\Scripts\python.exe build_exe.py
 ```
 
 需要 Python 3.12 + tkinter + PyInstaller（托管 Python 3.13 缺 tkinter，不要用）。

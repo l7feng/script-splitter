@@ -11,7 +11,7 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-PY = r'D:\My-Temporary\pt-build-env\Scripts\python.exe'
+PY = r'D:\Ai-Files\Agent-Preset\build-env\Scripts\python.exe'
 EXE_ROOT = r'D:\Ai-Files\Agent-Preset\exe'
 
 with open(os.path.join(ROOT, 'VERSION'), encoding='utf-8') as f:
@@ -37,12 +37,16 @@ def main():
         '--noconfirm', '--clean',
         '--onedir', '--windowed',
         '--name', NAME,
+        '--icon', os.path.join(ROOT, 'src', 'app.ico'),   # 复盘修复：exe 文件本体图标
         '--paths', os.path.join(ROOT, 'src'),
         '--hidden-import', 'core',
         '--hidden-import', 'styles',
         '--hidden-import', 'beautify',
+        '--hidden-import', 'theme',
         '--hidden-import', 'tkinterdnd2',
         '--collect-data', 'tkinterdnd2',
+        # 复盘修复：窗口 iconbitmap 依赖 app.ico 随包（冻结后 __file__ 在 _internal）
+        '--add-data', os.path.join(ROOT, 'src', 'app.ico') + os.pathsep + '.',
         '--distpath', DIST,
         '--workpath', WORK,
         '--specpath', SPEC,
