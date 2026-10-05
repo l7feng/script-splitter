@@ -11,8 +11,8 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-PY = r'D:\Ai-Files\Agent-Preset\build-env\Scripts\python.exe'
-EXE_ROOT = r'D:\Ai-Files\Agent-Preset\exe'
+PY = r'D:\Ai-Files\Tools\BuildEnv\Scripts\python.exe'
+EXE_ROOT = r'D:\Ai-Files\Tools\Exe'
 
 with open(os.path.join(ROOT, 'VERSION'), encoding='utf-8') as f:
     VERSION = f.read().strip()

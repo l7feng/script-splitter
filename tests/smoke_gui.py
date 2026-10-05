@@ -2,7 +2,7 @@
 """GUI 冒烟测试：构建界面、走一遍控件，不实际执行拆分。
 
 用打包环境的 Python 跑（托管 Python 3.13 没有 tkinter）：
-    D:\\Ai-Files\\Agent-Preset\\pt-build-env\\Scripts\\python.exe tests\\smoke_gui.py
+    D:\\Ai-Files\\Tools\\BuildEnv\\Scripts\\python.exe tests\\smoke_gui.py
 """
 import os
 import sys
