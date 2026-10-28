@@ -3,10 +3,13 @@
 
 用法：用打包环境的 Python 直接跑（不要用 PowerShell 包装，会把 PyInstaller 的
 stderr 当错误中断）：
-    D:\\My-Temporary\\pt-build-env\\Scripts\\python.exe build_exe.py
+    D:\\Ai-Files\\Tools\\BuildEnv\\Scripts\\python.exe build_exe.py
+
+出口：04-剧本双语拆分工具/script-splitter-v<版本>，exe与_internal同级；重建前包进入00-归档。
 """
 import datetime
 import os
+import shutil
 import subprocess
 import sys
 
@@ -18,7 +21,8 @@ with open(os.path.join(ROOT, 'VERSION'), encoding='utf-8') as f:
     VERSION = f.read().strip()
 DATE = datetime.datetime.now().strftime('%Y%m%d')
 
-DIST = os.path.join(EXE_ROOT, 'script-splitter-v%s-%s' % (VERSION, DATE))
+DIST = os.path.join(EXE_ROOT, '04-剧本双语拆分工具', 'script-splitter-v%s' % VERSION)
+STAGING = os.path.join(ROOT, 'build', 'staging')
 WORK = os.path.join(ROOT, 'build', 'work')
 SPEC = os.path.join(ROOT, 'build')
 
@@ -30,7 +34,7 @@ def main():
     if not os.path.isfile(PY):
         print('[失败] 打包解释器不存在: %s' % PY)
         return 1
-    os.makedirs(DIST, exist_ok=True)
+    os.makedirs(STAGING, exist_ok=True)
 
     cmd = [
         PY, '-m', 'PyInstaller',
@@ -47,7 +51,7 @@ def main():
         '--collect-data', 'tkinterdnd2',
         # 复盘修复：窗口 iconbitmap 依赖 app.ico 随包（冻结后 __file__ 在 _internal）
         '--add-data', os.path.join(ROOT, 'src', 'app.ico') + os.pathsep + '.',
-        '--distpath', DIST,
+        '--distpath', STAGING,
         '--workpath', WORK,
         '--specpath', SPEC,
         ENTRY,
@@ -58,7 +62,18 @@ def main():
         print('\n[失败] PyInstaller 退出码 %d' % r.returncode)
         return r.returncode
 
-    exe = os.path.join(DIST, NAME, NAME + '.exe')
+    built = os.path.join(STAGING, NAME)
+    if not os.path.isfile(os.path.join(built, NAME + '.exe')):
+        print('[失败] staging 未产出 exe')
+        return 1
+    if os.path.isdir(DIST):
+        archive = os.path.join(EXE_ROOT, '00-归档')
+        os.makedirs(archive, exist_ok=True)
+        previous = os.path.join(archive, os.path.basename(DIST) + '-重建前-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f'))
+        os.rename(DIST, previous)
+    os.makedirs(os.path.dirname(DIST), exist_ok=True)
+    shutil.move(built, DIST)
+    exe = os.path.join(DIST, NAME + '.exe')
     print('\n完成: %s' % exe)
     print('存在: %s' % os.path.isfile(exe))
     return 0 if os.path.isfile(exe) else 1

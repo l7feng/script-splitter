@@ -58,6 +58,8 @@ D:\Ai-Files\Tools\BuildEnv\Scripts\python.exe build_exe.py
 
 需要 Python 3.12 + tkinter + PyInstaller（托管 Python 3.13 缺 tkinter，不要用）。
 
+成品发布到 `D:\Ai-Files\Tools\Exe\script-splitter-v<版本>-<日期>\`，进入目录即可双击 `script-splitter.exe`，同级 `_internal` 为运行必需依赖。构建中间包在仓库 `build/dist`，成功后整包发布；发布目录已存在时停止，避免覆盖现有包。
+
 ## 实测
 
 样例 `《Falcão的90日新娘》删减标注版v6.docx`：**53 集 / 85 场 / 769 条对白 / 40 个角色**。
