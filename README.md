@@ -21,7 +21,7 @@
 
 ### exe（推荐）
 
-双击 `script-splitter.exe`（界面标题仍为中文「剧本双语拆分工具」），或把 `.docx` 拖到窗口 / exe 图标上 → 勾选导出格式 → 开始拆分。
+双击 `script-splitter.exe`（界面标题仍为中文「剧本双语拆分工具」）→ 浏览选择 `.docx` 剧本 → 勾选导出格式 → 开始拆分。界面默认暗色，右上角可切浅色。
 输出目录默认与源文件同级的 `<文件名>_split\`。
 
 ### 命令行
@@ -38,17 +38,19 @@ python src/cli.py *.docx --all --lang en             # 批量；处理整篇；�
 ## 目录
 
 ```
-src/core.py      解析引擎：docx XML 读写、段落分类、对白拆解、语种识别
-src/styles.py    排版模板注册表（cn / hollywood）
-src/beautify.py  排版层：样式套用、清空白行、TOC 域、页边距、页眉页脚
-src/cli.py       命令行入口
-src/gui.py       图形界面（tkinter，支持拖拽）
-tests/           结构校验 + GUI 冒烟测试
+src/core.py       解析引擎：docx XML 读写、段落分类、对白拆解、语种识别
+src/styles.py     排版模板注册表（cn / hollywood）
+src/beautify.py   排版层：样式套用、清空白行、TOC 域、页边距、页眉页脚
+src/cli.py        命令行入口（无头 / 批处理）
+src/options.py    选项注册表（语种 / 导出格式，纯数据、不依赖界面框架）
+src/desktop_app.py 图形界面壳：pywebview 内嵌本地页面 + 内置 http 服务 + 原生能力桥接
+src/web/          界面页面：index.html / styles.css（暗色·浅色液态玻璃）/ app.js
+tests/            结构校验 + 冒烟测试
 ```
 
 > 需求 / 方案 / 进度三份过程文档已移出仓库，收在个人知识库 `4-项目/14-剧本双语拆分工具/`；本仓库只保留代码与本说明。
 
-**分层铁律**：`core.py` / `styles.py` / `beautify.py` 都不 import tkinter（保证 CLI 与无头环境可用）。
+**分层铁律**：`core.py` / `styles.py` / `beautify.py` 都不 import 任何界面框架（保证 CLI 与无头环境可用）；界面壳 `desktop_app.py` 也不依赖 tkinter，渲染交给内嵌的本地 HTML/CSS/JS。
 
 ## 构建 exe
 
@@ -56,7 +58,7 @@ tests/           结构校验 + GUI 冒烟测试
 D:\Ai-Files\Tools\BuildEnv\Scripts\python.exe build_exe.py
 ```
 
-需要 Python 3.12 + tkinter + PyInstaller（托管 Python 3.13 缺 tkinter，不要用）。
+需要 Python 3.12 + pywebview（WebView2 运行时）+ PyInstaller（托管 Python 3.13 缺依赖，不要用）。
 
 成品发布到 `D:\Ai-Files\Tools\Exe\script-splitter-v<版本>-<日期>\`，进入目录即可双击 `script-splitter.exe`，同级 `_internal` 为运行必需依赖。构建中间包在仓库 `build/dist`，成功后整包发布；发布目录已存在时停止，避免覆盖现有包。
 

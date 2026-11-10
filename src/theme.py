@@ -26,56 +26,64 @@ PAD_Y = 8
 INNER_X = 8         # 区块内行/列边距
 INNER_Y = 8
 
+# ---------------------------------------------------------------- 字体层级（对齐 pt-tools）
+FONT_TITLE = ('Microsoft YaHei UI', 15, 'bold')   # 窗口/页标题
+FONT_SUB = ('Microsoft YaHei UI', 11, 'bold')    # 分组标题（LabelFrame）
+FONT_BODY = ('Microsoft YaHei UI', 10)           # 正文
+FONT_BOLD = ('Microsoft YaHei UI', 10, 'bold')   # 加粗正文/按钮
+FONT_SMALL = ('Microsoft YaHei UI', 9)           # 次要/提示
+FONT_MONO = ('Consolas', 10)                     # 日志/路径/数据等宽
+
 # ================================================================ 第 1 层 primitive
 # 每套界面模式一块色板（2026-09-30 S2 起三套：warm / cool / night）。
 # 键名即 primitive 键名，与旧 COLOR 键一一对应（改名=破坏兼容，禁止）。
 PALETTES = {
     'warm': {
-        'bg':          '#f5f2ec',  # 应用背景 暖米白
-        'panel_bg':    '#faf8f3',  # 日志区底色（更浅暖白）
-        'panel_fg':    '#3a352d',  # 日志文字
-        'text':        '#2e2a24',  # 主文字 暖近黑
-        'hint':        '#6f685e',  # 提示灰（S3 对比度修正 #8c857a→#6f685e，4.9:1 达 AA）
-        'border':      '#e3ddd0',  # 边框 暖灰
-        'entry_bg':    '#fffdf8',  # 输入框底 近白暖
-        'btn':         '#ece7dd',  # 普通像素按钮底
-        'btn_active':  '#ddd5c8',  # 普通按钮按下/悬停底
-        'danger':      '#b4543e',  # 危险/不可逆 暖红
-        'danger_active': '#9c4632',
-        'ok':          '#477a4e',  # 成功/完成 暖绿（S3 加深，4.75:1 AA）
-        'warn':        '#8f6516',  # 警告 暖黄（S3 加深，4.90:1 AA）
-        'info':        '#3a6ea5',  # 信息 蓝
+        'bg':          '#f3f0ea',  # 应用背景 暖米灰（对齐 pt-tools warm）
+        'panel_bg':    '#fdfcfa',  # 卡片/日志底 近白暖
+        'panel_fg':    '#26221c',  # 日志文字
+        'text':        '#1f1c17',  # 主文字 深暖黑
+        'hint':        '#6b6860',  # 次要文字
+        'border':      '#e0ddd6',  # 细边框 暖灰
+        'entry_bg':    '#ffffff',  # 输入框底 纯白
+        'btn':         '#fdfcfa',  # 普通按钮底 卡片白
+        'btn_active':  '#ece7dd',  # 普通按钮悬停底
+        'danger':      '#c94f3d',  # 危险/不可逆 红
+        'danger_active': '#b0412f',
+        'ok':          '#3f7d46',  # 成功/完成 绿
+        'warn':        '#8a6315',  # 警告 暖黄
+        'info':        '#5e7a8b',  # 信息 青灰蓝
     },
     # 冷调浅（2026-09-30 S2）：窗底 ΔL(warm)=18.7、ΔR=29 —— 吃 34 号 D1 教训，
     # 初选 nord 底 #eceff4 与暖米白 ΔL 仅 3.6（切了像没切），故拉到明显冷灰蓝。
     'cool': {
-        'bg':          '#d8e1ec',
-        'panel_bg':    '#e6edf5',
-        'panel_fg':    '#2f3640',
-        'text':        '#2b3440',
-        'hint':        '#4d5a68',
-        'border':      '#c2cedd',
-        'entry_bg':    '#f4f8fc',
-        'btn':         '#ccd8e6',
-        'btn_active':  '#b9c9db',
-        'danger':      '#a8503f',
-        'danger_active': '#8f4234',
+        'bg':          '#eef1f5',
+        'panel_bg':    '#ffffff',
+        'panel_fg':    '#26303a',
+        'text':        '#222c36',
+        'hint':        '#5a6672',
+        'border':      '#d6dde5',
+        'entry_bg':    '#ffffff',
+        'btn':         '#ffffff',
+        'btn_active':  '#e4e9ef',
+        'danger':      '#b4483a',
+        'danger_active': '#9c3b2f',
         'ok':          '#35704a',
         'warn':        '#8a6315',
-        'info':        '#3a6ea5',
+        'info':        '#4a6f96',
     },
     # 暖夜深（2026-09-30 S2）：暖棕黑家族（非纯黑冷灰），对齐用户暖调审美；
     # 与 warm ΔL=213、与 cool ΔL=195，深浅互切一眼可辨。
     'night': {
-        'bg':          '#201c18',
-        'panel_bg':    '#262019',
-        'panel_fg':    '#d8cfc2',
-        'text':        '#ece5da',
-        'hint':        '#a89c8d',
-        'border':      '#3e372f',
-        'entry_bg':    '#2b251f',
-        'btn':         '#363029',
-        'btn_active':  '#463e35',
+        'bg':          '#1b1815',
+        'panel_bg':    '#26211c',
+        'panel_fg':    '#e2d9cb',
+        'text':        '#ece5d9',
+        'hint':        '#a89c8c',
+        'border':      '#3a332c',
+        'entry_bg':    '#2e2822',
+        'btn':         '#332c25',
+        'btn_active':  '#423a31',
         'danger':      '#d4706a',
         'danger_active': '#c05b55',
         'ok':          '#85b47a',
@@ -135,7 +143,7 @@ THEME_ORDER = [
     ('blue',   '蓝',   '#3a6ea5', '#2f5a89', '#ffffff'),
     ('cyan',   '青',   '#2f8f8f', '#267676', '#ffffff'),
     ('green',  '绿',   '#5a8a5f', '#487a4d', '#ffffff'),
-    ('orange', '橙',   '#cc785c', '#b5674c', '#fffdf9'),   # Claude 暖陶土（默认）
+    ('orange', '橙',   '#c96442', '#b4552f', '#fff7f2'),   # Claude 赤陶（默认）
     ('purple', '紫',   '#8a6fb0', '#745a99', '#ffffff'),
     ('red',    '红',   '#b4543e', '#9c4632', '#fffdf9'),
 ]
@@ -178,7 +186,9 @@ def _restyle_registered_buttons():
             else:
                 w.configure(bg=tok['surface.btn'], fg=tok['text.primary'],
                             activebackground=tok['surface.btn.active'],
-                            activeforeground=tok['text.primary'])
+                            activeforeground=tok['text.primary'],
+                            highlightbackground=tok['border.default'],
+                            highlightcolor=tok['border.default'])
         except Exception:
             pass
     _PIXEL_BUTTONS[:] = alive
@@ -192,8 +202,9 @@ def _fire_palette_hooks():
             pass
 
 # ---------------------------------------------------------------- 窗口几何
-MIN_W, MIN_H = 900, 620
-FIRST_MAX_W, FIRST_MAX_H = 1180, 842   # 首次自适应封顶（比例 ≈1.40，对齐 PT）
+# 两栏布局：左表单 + 右日志，最小宽度需容纳两列；自适应封顶对齐 PT 比例。
+MIN_W, MIN_H = 960, 640
+FIRST_MAX_W, FIRST_MAX_H = 1200, 860   # 首次自适应封顶（比例 ≈1.40）
 
 # ---------------------------------------------------------------- 设置持久化
 DEFAULT_SETTINGS = {
@@ -295,28 +306,34 @@ def setup_theme(root, theme_name=DEFAULT_THEME, mode=None):
     except Exception:
         pass
 
-    s.configure('TLabel', background=tok['surface.window'], foreground=tok['text.primary'])
+    # 全局基底：正文层级字体 + 窗口底
+    s.configure('.', background=tok['surface.window'], foreground=tok['text.primary'],
+                font=FONT_BODY, bordercolor=tok['border.default'])
+    s.configure('TLabel', background=tok['surface.window'], foreground=tok['text.primary'],
+                font=FONT_BODY)
     s.configure('TFrame', background=tok['surface.window'])
     # ⚠ 规范样式名是 TLabelframe（winfo_class 决定，小写 l）；
     #   曾误写 TLabelFrame（大写）= 幽灵样式名，配置静默不生效。
+    # 分组框：1px 细实线（非 groove 浮雕），标题用次级粗体层级。
     s.configure('TLabelframe', background=tok['surface.window'], foreground=tok['text.primary'],
-                bordercolor=tok['border.default'], relief='groove',
-                lightcolor=tok['border.default'], darkcolor=tok['border.default'])
+                bordercolor=tok['border.default'], relief='solid', borderwidth=1,
+                padding=(10, 8))
     s.configure('TLabelframe.Label', background=tok['surface.window'],
-                foreground=tok['text.primary'])
+                foreground=tok['text.primary'], font=FONT_SUB)
     s.configure('TCheckbutton', background=tok['surface.window'],
-                foreground=tok['text.primary'],
+                foreground=tok['text.primary'], font=FONT_BODY,
                 indicatorbackground=tok['surface.input'],
                 indicatorforeground=th['accent'])
     s.configure('TRadiobutton', background=tok['surface.window'],
-                foreground=tok['text.primary'],
+                foreground=tok['text.primary'], font=FONT_BODY,
                 indicatorbackground=tok['surface.input'],
                 indicatorforeground=th['accent'])
     s.configure('TEntry', fieldbackground=tok['surface.input'],
                 foreground=tok['text.primary'],
-                insertcolor=tok['text.primary'], bordercolor=tok['border.default'])
+                insertcolor=tok['text.primary'], bordercolor=tok['border.default'],
+                font=FONT_BODY, padding=4)
     s.configure('TCombobox', fieldbackground=tok['surface.input'],
-                foreground=tok['text.primary'])
+                foreground=tok['text.primary'], font=FONT_BODY)
     s.map('TCheckbutton', background=[('active', tok['surface.window'])],
           indicatorbackground=[('selected', th['accent'])])
     s.map('TRadiobutton', background=[('active', tok['surface.window'])],
@@ -332,6 +349,13 @@ def setup_theme(root, theme_name=DEFAULT_THEME, mode=None):
                 bordercolor=tok['surface.window'],
                 lightcolor=tok['surface.input'], darkcolor=tok['surface.input'],
                 thickness=10)
+    # 日志区垂直滚动条：槽=输入底色、滑块=普通按钮底，箭头/文字取主文字色
+    s.configure('Vertical.TScrollbar',
+                background=tok['surface.btn'], troughcolor=tok['surface.input'],
+                bordercolor=tok['border.default'], arrowcolor=tok['text.primary'],
+                relief='flat')
+    s.map('Vertical.TScrollbar',
+          background=[('active', tok['surface.btn.active'])])
     _restyle_registered_buttons()       # 热刷新登记过的像素按钮
     _fire_palette_hooks()               # gui 层补刷 ttk 管不到的原生控件
     return th
@@ -358,24 +382,30 @@ def make_button(master, text='', command=None, accent=False, **kw):
         bg = _CURRENT['accent']
         fg = _CURRENT['accent_text']
         abg = _CURRENT['accent_active']
-        font = ('', 10, 'bold')
+        font = FONT_BOLD
+        padx, pady = 16, 7
+        edge = _CURRENT['accent']
     else:
         bg = tok['surface.btn']
         fg = tok['text.primary']
         abg = tok['surface.btn.active']
-        font = ('', 10)
+        font = FONT_BODY
+        padx, pady = 14, 6
+        edge = tok['border.default']
     kw.setdefault('bg', bg)
     kw.setdefault('fg', fg)
     kw.setdefault('activebackground', abg)
     kw.setdefault('activeforeground', fg)
-    # S3 ③禁用态：禁用时文字向底色混 55%，不再依赖系统默认的失控灰
+    # 禁用态：文字向底色混 55%，不依赖系统默认失控灰
     kw.setdefault('disabledforeground', _blend(fg, bg, 0.55))
-    kw.setdefault('relief', 'solid')          # 直角硬边（像素风）
-    kw.setdefault('borderwidth', 1)
-    kw.setdefault('highlightthickness', 0)
-    kw.setdefault('overrelief', 'solid')      # 悬停不变形
-    kw.setdefault('padx', 12)
-    kw.setdefault('pady', 5)
+    kw.setdefault('relief', 'flat')
+    kw.setdefault('borderwidth', 0)
+    kw.setdefault('highlightthickness', 1)
+    kw.setdefault('highlightbackground', edge)
+    kw.setdefault('highlightcolor', edge)
+    kw.setdefault('overrelief', 'flat')
+    kw.setdefault('padx', padx)
+    kw.setdefault('pady', pady)
     kw.setdefault('cursor', 'hand2')
     kw.setdefault('font', font)
     btn = tk.Button(master, text=text, command=command, **kw)
@@ -384,12 +414,14 @@ def make_button(master, text='', command=None, accent=False, **kw):
 
 
 def restyle_accent_button(widget):
-    """主题切换时热刷新一个强调色像素按钮的配色。"""
+    """主题切换时热刷新一个强调色按钮的配色。"""
     try:
         widget.configure(bg=_CURRENT['accent'],
                          fg=_CURRENT['accent_text'],
                          activebackground=_CURRENT['accent_active'],
-                         activeforeground=_CURRENT['accent_text'])
+                         activeforeground=_CURRENT['accent_text'],
+                         highlightbackground=_CURRENT['accent'],
+                         highlightcolor=_CURRENT['accent'])
     except Exception:
         pass
 

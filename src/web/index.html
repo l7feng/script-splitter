@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>剧本双语拆分工具</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-theme="dark">
+  <!-- 背景光斑（液态玻璃氛围层） -->
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">S</span>
+      <div class="brand-text">
+        <h1>剧本双语拆分</h1>
+        <span class="ver" id="appVersion">v0.2.0</span>
+      </div>
+    </div>
+    <button class="btn secondary sm" id="themeToggle" title="切换暗色 / 浅色">◐ 浅色</button>
+  </header>
+
+  <!-- 主区：表单卡片（可折叠）+ 固定操作行 -->
+  <main class="workspace">
+    <div class="form-area">
+      <div class="cards">
+
+      <section class="card collapsible wide" data-card="file">
+        <button class="card-head" type="button" aria-expanded="true">
+          <h2 class="card-title">剧本文件</h2>
+          <span class="chev" aria-hidden="true">▾</span>
+        </button>
+        <div class="card-body">
+          <div class="row">
+            <input id="filePath" class="input" type="text" readonly placeholder="选择 .docx 剧本">
+            <button class="btn secondary" id="browseFile">浏览…</button>
+          </div>
+          <p class="tip" id="fileTip">把 .docx 路径填入，或点「浏览…」选择剧本</p>
+        </div>
+      </section>
+
+      <section class="card collapsible" data-card="opts">
+        <button class="card-head" type="button" aria-expanded="true">
+          <h2 class="card-title">选项</h2>
+          <span class="chev" aria-hidden="true">▾</span>
+        </button>
+        <div class="card-body">
+          <div class="field-group" id="langRow"></div>
+          <label class="check"><input type="checkbox" id="onlyBody"> 只处理分集正文（跳过大纲 / 人物小传）</label>
+          <label class="check"><input type="checkbox" id="stripRev"> 清除删除线与修订痕迹</label>
+        </div>
+      </section>
+
+      <section class="card collapsible" data-card="tpl">
+        <button class="card-head" type="button" aria-expanded="true">
+          <h2 class="card-title">排版（作用于 docx）</h2>
+          <span class="chev" aria-hidden="true">▾</span>
+        </button>
+        <div class="card-body">
+          <div class="field-group" id="tplRow"></div>
+          <label class="check"><input type="checkbox" id="beautify"> 美化排版（清空行 / 字体字号 / 行距）</label>
+          <label class="check"><input type="checkbox" id="toc"> 插入目录（打开后 Ctrl+A 再 F9）</label>
+          <label class="check"><input type="checkbox" id="hf"> 页眉页脚（剧名 + 页码）</label>
+        </div>
+      </section>
+
+      <section class="card collapsible" data-card="fmt">
+        <button class="card-head" type="button" aria-expanded="true">
+          <h2 class="card-title">导出格式（默认 CSV）</h2>
+          <span class="chev" aria-hidden="true">▾</span>
+        </button>
+        <div class="card-body">
+          <div class="check-list" id="fmtList"></div>
+        </div>
+      </section>
+
+      <section class="card collapsible wide" data-card="out">
+        <button class="card-head" type="button" aria-expanded="true">
+          <h2 class="card-title">输出目录</h2>
+          <span class="chev" aria-hidden="true">▾</span>
+        </button>
+        <div class="card-body">
+          <div class="row">
+            <input id="outDir" class="input" type="text" placeholder="留空 = 与源文件同目录">
+            <button class="btn secondary" id="browseDir">选择…</button>
+          </div>
+        </div>
+      </section>
+
+      </div>
+
+      <div class="actions">
+        <button class="btn accent" id="startBtn">开始拆分</button>
+        <button class="btn secondary" id="openOut">打开输出目录</button>
+        <div class="progress" id="progress" hidden><div class="bar"></div></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 底部日志坞：默认收起，点横条展开 -->
+  <section class="log-dock" id="logDock">
+    <button class="log-bar" id="logBar" type="button" aria-expanded="false">
+      <span class="log-dot" id="logDot"></span>
+      <span class="log-label">运行日志</span>
+      <span class="log-preview" id="logPreview">暂无日志</span>
+      <span class="log-count" id="logCount" hidden></span>
+      <span class="chev" id="logChev" aria-hidden="true">▾</span>
+    </button>
+    <div class="log-panel" id="logPanel" hidden>
+      <div class="log-toolbar">
+        <button class="btn secondary sm" id="clearLog" type="button">清空日志</button>
+      </div>
+      <div class="log" id="log" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>

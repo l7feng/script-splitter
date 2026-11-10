@@ -16,7 +16,8 @@ from theme import (setup_theme, initial_geometry, save_geometry, COLOR,
                    load_settings, save_settings,
                    DEFAULT_SETTINGS, DEFAULT_THEME, DEFAULT_MODE,
                    make_button, restyle_accent_button,
-                   register_palette_hook)  # noqa: E402
+                   register_palette_hook,
+                   FONT_BODY, FONT_SMALL, FONT_MONO)  # noqa: E402
 
 VERSION = '0.2.0'
 
@@ -34,6 +35,9 @@ FORMATS = [
 
 TEMPLATES = list_templates()
 
+# 日志区字体（等宽，路径/数据对齐；行距在控件处设置）
+LOG_FONT = FONT_MONO
+
 try:
     from tkinterdnd2 import TkinterDnD, DND_FILES
     HAS_DND = True
@@ -49,8 +53,7 @@ class App:
         self._last_out_dir = None
         self.settings = load_settings()
         root.title('剧本双语拆分工具 v%s' % VERSION)
-        root.geometry('780x720')
-        root.minsize(700, 660)
+        # 窗口尺寸 / 最小尺寸统一由 theme.initial_geometry 管理，此处不再硬编码
 
         self.path_var = tk.StringVar()
         self.out_var = tk.StringVar()
@@ -97,75 +100,30 @@ class App:
         self._pump()
 
     # ---------------------------------------------------------------- UI
+    def _path_row(self, parent, var, button_text, command):
+        """复用的「输入框 + 浏览按钮」一行（文件选择 / 输出目录）。"""
+        row = ttk.Frame(parent)
+        row.pack(fill='x', padx=8, pady=8)
+        ttk.Entry(row, textvariable=var).pack(side='left', fill='x', expand=True)
+        make_button(row, text=button_text, command=command).pack(side='left', padx=6)
+        return row
+
     def _build(self):
         pad = {'padx': PAD_X, 'pady': PAD_Y}
         frm = ttk.Frame(self.root)
         frm.pack(fill='both', expand=True)
 
-        # 文件选择
-        box = ttk.LabelFrame(frm, text='剧本文件')
-        box.pack(fill='x', **pad)
-        row = ttk.Frame(box)
-        row.pack(fill='x', padx=8, pady=8)
-        ttk.Entry(row, textvariable=self.path_var).pack(side='left', fill='x', expand=True)
-        make_button(row, text='浏览…', command=self.browse).pack(side='left', padx=6)
-        tip = '把 .docx 拖到窗口里即可' if HAS_DND else '（未安装拖拽支持，请点浏览）'
-        tip_lbl = ttk.Label(box, text=tip, foreground=COLOR['hint'])
-        tip_lbl.pack(anchor='w', padx=10, pady=(0, 8))
-        self._hint_labels.append(tip_lbl)
+        # 左右两栏：左表单 / 右日志，分隔条可拖拽
+        self._paned = ttk.PanedWindow(frm, orient='horizontal')
+        self._paned.pack(fill='both', expand=True, **pad)
+        left = ttk.Frame(self._paned)
+        right = ttk.Frame(self._paned)
+        self._paned.add(left, weight=1)
+        self._paned.add(right, weight=1)
 
-        # 选项
-        opt = ttk.LabelFrame(frm, text='选项')
-        opt.pack(fill='x', **pad)
-        r1 = ttk.Frame(opt)
-        r1.pack(fill='x', padx=8, pady=6)
-        ttk.Label(r1, text='外语语种：').pack(side='left')
-        for v, t in (('auto', '自动识别'), ('pt', '葡萄牙语'), ('en', '英语')):
-            ttk.Radiobutton(r1, text=t, value=v, variable=self.lang_var).pack(side='left', padx=8)
-        r2 = ttk.Frame(opt)
-        r2.pack(fill='x', padx=8, pady=(0, 8))
-        ttk.Checkbutton(r2, text='只处理分集正文（跳过大纲 / 人物小传）',
-                        variable=self.only_body_var).pack(side='left')
-        ttk.Checkbutton(r2, text='清除删除线与修订痕迹',
-                        variable=self.strip_var).pack(side='left', padx=16)
-
-        # 排版
-        tb = ttk.LabelFrame(frm, text='排版（作用于 docx）')
-        tb.pack(fill='x', **pad)
-        r5 = ttk.Frame(tb)
-        r5.pack(fill='x', padx=8, pady=6)
-        ttk.Label(r5, text='模板：').pack(side='left')
-        for k, label in TEMPLATES:
-            ttk.Radiobutton(r5, text=label, value=k, variable=self.tpl_var).pack(side='left', padx=8)
-        r6 = ttk.Frame(tb)
-        r6.pack(fill='x', padx=8, pady=(0, 8))
-        ttk.Checkbutton(r6, text='美化排版（清空行 / 字体字号 / 行距）',
-                        variable=self.beautify_var).pack(side='left')
-        ttk.Checkbutton(r6, text='插入目录（打开后 Ctrl+A 再 F9）',
-                        variable=self.toc_var).pack(side='left', padx=14)
-        ttk.Checkbutton(r6, text='页眉页脚（剧名 + 页码）',
-                        variable=self.hf_var).pack(side='left')
-
-        # 导出格式
-        fb = ttk.LabelFrame(frm, text='导出格式（默认 CSV）')
-        fb.pack(fill='x', **pad)
-        g = ttk.Frame(fb)
-        g.pack(fill='x', padx=8, pady=6)
-        for i, (k, label, _d) in enumerate(FORMATS):
-            ttk.Checkbutton(g, text=label, variable=self.fmt_vars[k]).grid(
-                row=i // 2, column=i % 2, sticky='w', padx=6, pady=2)
-
-        # 输出目录
-        ob = ttk.LabelFrame(frm, text='输出目录')
-        ob.pack(fill='x', **pad)
-        r3 = ttk.Frame(ob)
-        r3.pack(fill='x', padx=8, pady=8)
-        ttk.Entry(r3, textvariable=self.out_var).pack(side='left', fill='x', expand=True)
-        make_button(r3, text='选择…', command=self.pick_out).pack(side='left', padx=6)
-
-        # 运行
-        r4 = ttk.Frame(frm)
-        r4.pack(fill='x', padx=12, pady=4)
+        # ---- 左栏：底部固定操作行 + 上方可滚动表单 ----
+        r4 = ttk.Frame(left)
+        r4.pack(side='bottom', fill='x', padx=4, pady=(8, 4))
         self.btn = make_button(r4, text='开始拆分', command=self.start, accent=True)
         self.btn.pack(side='left')
         make_button(r4, text='打开输出目录', command=self.open_out).pack(side='left', padx=6)
@@ -173,13 +131,98 @@ class App:
         self.prog.pack(side='left', fill='x', expand=True, padx=10)
         make_button(r4, text='⚙ 设置', command=self._open_settings).pack(side='right', padx=6)
 
-        # 日志
-        lb = ttk.LabelFrame(frm, text='运行日志')
+        wrap = ttk.Frame(left)
+        wrap.pack(side='top', fill='both', expand=True)
+        self._form_canvas = tk.Canvas(wrap, highlightthickness=0, background=COLOR['bg'])
+        csb = ttk.Scrollbar(wrap, orient='vertical', command=self._form_canvas.yview)
+        self._form = ttk.Frame(self._form_canvas)
+        self._form.bind('<Configure>',
+                        lambda e: self._form_canvas.configure(scrollregion=self._form_canvas.bbox('all')))
+        cwin = self._form_canvas.create_window((0, 0), window=self._form, anchor='nw')
+        self._form_canvas.configure(yscrollcommand=csb.set)
+        csb.pack(side='right', fill='y')
+        self._form_canvas.pack(side='left', fill='both', expand=True)
+        self._form_canvas.bind('<Configure>',
+                    lambda e: self._form_canvas.itemconfigure(cwin, width=e.width))
+        self._form_canvas.bind('<Enter>',
+                    lambda e: self._form_canvas.bind_all('<MouseWheel>',
+                                              lambda ev: self._form_canvas.yview_scroll(int(-ev.delta / 120), 'units')))
+        self._form_canvas.bind('<Leave>', lambda e: self._form_canvas.unbind_all('<MouseWheel>'))
+
+        # 文件选择
+        box = ttk.LabelFrame(self._form, text='剧本文件')
+        box.pack(fill='x', **pad)
+        self._path_row(box, self.path_var, '浏览…', self.browse)
+        tip = '把 .docx 拖到窗口里即可' if HAS_DND else '（未安装拖拽支持，请点浏览）'
+        tip_lbl = ttk.Label(box, text=tip, foreground=COLOR['hint'], font=FONT_SMALL)
+        tip_lbl.pack(anchor='w', padx=10, pady=(0, 8))
+        self._hint_labels.append(tip_lbl)
+
+        # 选项
+        opt = ttk.LabelFrame(self._form, text='选项')
+        opt.pack(fill='x', **pad)
+        r1 = ttk.Frame(opt)
+        r1.pack(fill='x', padx=8, pady=6)
+        ttk.Label(r1, text='外语语种：', width=9).pack(side='left')
+        for v, t in (('auto', '自动识别'), ('pt', '葡萄牙语'), ('en', '英语')):
+            ttk.Radiobutton(r1, text=t, value=v, variable=self.lang_var).pack(side='left', padx=8)
+        r2 = ttk.Frame(opt)
+        r2.pack(fill='x', padx=8, pady=(0, 8))
+        r2.columnconfigure(0, weight=1)
+        r2.columnconfigure(1, weight=1)
+        ttk.Checkbutton(r2, text='只处理分集正文（跳过大纲 / 人物小传）',
+                        variable=self.only_body_var).grid(row=0, column=0, sticky='w', pady=2)
+        ttk.Checkbutton(r2, text='清除删除线与修订痕迹',
+                        variable=self.strip_var).grid(row=0, column=1, sticky='w', padx=12, pady=2)
+
+        # 排版
+        tb = ttk.LabelFrame(self._form, text='排版（作用于 docx）')
+        tb.pack(fill='x', **pad)
+        r5 = ttk.Frame(tb)
+        r5.pack(fill='x', padx=8, pady=6)
+        ttk.Label(r5, text='模板：', width=9).pack(side='left')
+        for k, label in TEMPLATES:
+            ttk.Radiobutton(r5, text=label, value=k, variable=self.tpl_var).pack(side='left', padx=8)
+        r6 = ttk.Frame(tb)
+        r6.pack(fill='x', padx=8, pady=(0, 8))
+        r6.columnconfigure(0, weight=1)
+        r6.columnconfigure(1, weight=1)
+        ttk.Checkbutton(r6, text='美化排版（清空行 / 字体字号 / 行距）',
+                        variable=self.beautify_var).grid(row=0, column=0, sticky='w', pady=2)
+        ttk.Checkbutton(r6, text='插入目录（打开后 Ctrl+A 再 F9）',
+                        variable=self.toc_var).grid(row=0, column=1, sticky='w', padx=12, pady=2)
+        ttk.Checkbutton(r6, text='页眉页脚（剧名 + 页码）',
+                        variable=self.hf_var).grid(row=1, column=0, sticky='w', pady=2)
+
+        # 导出格式（单列：标签较长，两列会被截断）
+        fb = ttk.LabelFrame(self._form, text='导出格式（默认 CSV）')
+        fb.pack(fill='x', **pad)
+        g = ttk.Frame(fb)
+        g.pack(fill='x', padx=8, pady=6)
+        g.columnconfigure(0, weight=1)
+        for i, (k, label, _d) in enumerate(FORMATS):
+            ttk.Checkbutton(g, text=label, variable=self.fmt_vars[k]).grid(
+                row=i, column=0, sticky='w', padx=6, pady=2)
+
+        # 输出目录
+        ob = ttk.LabelFrame(self._form, text='输出目录')
+        ob.pack(fill='x', **pad)
+        self._path_row(ob, self.out_var, '选择…', self.pick_out)
+
+        # ---- 右栏：运行日志 ----
+        lb = ttk.LabelFrame(right, text='运行日志')
         lb.pack(fill='both', expand=True, **pad)
-        self.log = tk.Text(lb, height=12, wrap='word', relief='flat',
+        log_body = ttk.Frame(lb)
+        log_body.pack(fill='both', expand=True, padx=INNER_X, pady=INNER_Y)
+        sb = ttk.Scrollbar(log_body, orient='vertical')
+        self.log = tk.Text(log_body, height=12, width=42, wrap='word', relief='flat',
                             background=COLOR['panel_bg'],
-                            foreground=COLOR['panel_fg'])
-        self.log.pack(fill='both', expand=True, padx=INNER_X, pady=INNER_Y)
+                            foreground=COLOR['panel_fg'],
+                            font=LOG_FONT, spacing1=2, spacing3=4,
+                            yscrollcommand=sb.set)
+        sb.configure(command=self.log.yview)
+        sb.pack(side='right', fill='y')
+        self.log.pack(side='left', fill='both', expand=True)
         self.log.tag_configure('ok', foreground=COLOR['ok'])
         self.log.tag_configure('fail', foreground=COLOR['danger'])
         self.log.tag_configure('warn', foreground=COLOR['warn'])
@@ -209,6 +252,12 @@ class App:
         for w in getattr(self, '_hint_labels', []):
             try:
                 w.configure(foreground=tok['text.hint'])
+            except Exception:
+                pass
+        cv = getattr(self, '_form_canvas', None)
+        if cv is not None:
+            try:
+                cv.configure(background=tok['surface.window'])
             except Exception:
                 pass
 
@@ -531,7 +580,7 @@ class App:
 
 def main():
     root = TkinterDnD.Tk() if HAS_DND else tk.Tk()
-    # S3 ⑧窗口图标（像素风 ico，生成脚本 tools/_gen_icon.py；缺失则静默跳过）
+    # 窗口图标（多分辨率 ico，生成脚本 tools/gen_icon.py；缺失则静默跳过）
     try:
         root.iconbitmap(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'app.ico'))
     except Exception:
@@ -542,6 +591,13 @@ def main():
     if dropped:
         app._on_file_chosen(dropped[0])
     initial_geometry(root)
+    # 延迟到窗口映射后再定初始分栏，避免未布局时 sashpos 把左栏压塌
+    def _place_pane():
+        try:
+            app._paned.sashpos(0, 520)
+        except Exception:
+            pass
+    root.after(150, _place_pane)
     root.protocol('WM_DELETE_WINDOW',
                   lambda: (app._persist_options(), save_geometry(root), root.destroy()))
     root.mainloop()

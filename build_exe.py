@@ -27,7 +27,19 @@ WORK = os.path.join(ROOT, 'build', 'work')
 SPEC = os.path.join(ROOT, 'build')
 
 NAME = 'script-splitter'  # 2026-09-27 由「剧本双语拆分工具」改英文：上 GitHub 需全 ASCII；GUI 标题仍为中文
-ENTRY = os.path.join(ROOT, 'src', 'gui.py')
+ENTRY = os.path.join(ROOT, 'src', 'desktop_app.py')
+ICON = os.path.join(ROOT, 'src', 'app.ico')
+
+# 打包后必须在 _internal 里存在的东西，缺一个 exe 就白屏或功能缺失
+MUST_HAVE = [
+    os.path.join('web', 'index.html'),
+    os.path.join('web', 'styles.css'),
+    os.path.join('web', 'app.js'),
+    'VERSION',
+    'app.ico',
+    os.path.join('webview', 'lib', 'Microsoft.Web.WebView2.WinForms.dll'),
+    os.path.join('webview', 'lib', 'Microsoft.Web.WebView2.Core.dll'),
+]
 
 
 def main():
@@ -41,16 +53,21 @@ def main():
         '--noconfirm', '--clean',
         '--onedir', '--windowed',
         '--name', NAME,
-        '--icon', os.path.join(ROOT, 'src', 'app.ico'),   # 复盘修复：exe 文件本体图标
+        '--icon', ICON,
         '--paths', os.path.join(ROOT, 'src'),
         '--hidden-import', 'core',
         '--hidden-import', 'styles',
         '--hidden-import', 'beautify',
-        '--hidden-import', 'theme',
-        '--hidden-import', 'tkinterdnd2',
-        '--collect-data', 'tkinterdnd2',
-        # 复盘修复：窗口 iconbitmap 依赖 app.ico 随包（冻结后 __file__ 在 _internal）
+        '--hidden-import', 'options',
+        # pywebview / WebView2：互操作 dll + 懒加载子模块 + pythonnet
+        '--collect-data', 'webview',
+        '--collect-submodules', 'webview',
+        '--hidden-import', 'clr',
+        '--hidden-import', 'clr_loader',
+        # 页面资源 / 版本 / 图标打到 _internal 根（冻结后 _MEIPASS）
+        '--add-data', os.path.join(ROOT, 'src', 'web') + os.pathsep + 'web',
         '--add-data', os.path.join(ROOT, 'src', 'app.ico') + os.pathsep + '.',
+        '--add-data', os.path.join(ROOT, 'VERSION') + os.pathsep + '.',
         '--distpath', STAGING,
         '--workpath', WORK,
         '--specpath', SPEC,
@@ -66,6 +83,17 @@ def main():
     if not os.path.isfile(os.path.join(built, NAME + '.exe')):
         print('[失败] staging 未产出 exe')
         return 1
+
+    # 落地校验：页面资源 / 版本 / 图标 / WebView2 dll 是否都在
+    internal = os.path.join(built, '_internal')
+    missing = [m for m in MUST_HAVE if not os.path.isfile(os.path.join(internal, m))]
+    if missing:
+        print('[失败] _internal 缺少必要文件:')
+        for m in missing:
+            print('   - %s' % m)
+        return 1
+    print('[校验] _internal 必要文件齐全（%d 项）' % len(MUST_HAVE))
+
     if os.path.isdir(DIST):
         archive = os.path.join(EXE_ROOT, '00-归档')
         os.makedirs(archive, exist_ok=True)
