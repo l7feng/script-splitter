@@ -97,12 +97,7 @@ body {
 .brand { display: flex; align-items: center; gap: 11px; }
 .brand-mark {
   width: 32px; height: 32px;
-  border-radius: 10px;
-  display: grid; place-items: center;
-  font-weight: 700; font-size: 17px;
-  color: var(--accent-text);
-  background: var(--accent);
-  box-shadow: var(--shadow);
+  object-fit: contain;
 }
 .brand-text h1 { font-size: 17px; font-weight: 600; }
 .ver { font-size: 11px; color: var(--muted); }

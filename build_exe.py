@@ -5,7 +5,7 @@
 stderr 当错误中断）：
     D:\\Ai-Files\\Tools\\BuildEnv\\Scripts\\python.exe build_exe.py
 
-出口：04-剧本双语拆分工具/script-splitter-v<版本>，exe与_internal同级；重建前包进入00-归档。
+出口：04-Script Splitter（剧本双语拆分）/script-splitter-v<版本>，exe与_internal同级；重建前包进入00-Archive（归档）。
 """
 import datetime
 import os
@@ -21,7 +21,7 @@ with open(os.path.join(ROOT, 'VERSION'), encoding='utf-8') as f:
     VERSION = f.read().strip()
 DATE = datetime.datetime.now().strftime('%Y%m%d')
 
-DIST = os.path.join(EXE_ROOT, '04-剧本双语拆分工具', 'script-splitter-v%s' % VERSION)
+DIST = os.path.join(EXE_ROOT, '04-Script Splitter（剧本双语拆分）', 'script-splitter-v%s' % VERSION)
 STAGING = os.path.join(ROOT, 'build', 'staging')
 WORK = os.path.join(ROOT, 'build', 'work')
 SPEC = os.path.join(ROOT, 'build')
@@ -95,7 +95,7 @@ def main():
     print('[校验] _internal 必要文件齐全（%d 项）' % len(MUST_HAVE))
 
     if os.path.isdir(DIST):
-        archive = os.path.join(EXE_ROOT, '00-归档')
+        archive = os.path.join(EXE_ROOT, '00-Archive（归档）')
         os.makedirs(archive, exist_ok=True)
         previous = os.path.join(archive, os.path.basename(DIST) + '-重建前-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f'))
         os.rename(DIST, previous)
