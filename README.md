@@ -21,7 +21,7 @@
 
 ### exe（推荐）
 
-双击 `script-splitter.exe`（界面标题仍为中文「剧本双语拆分工具」）→ 浏览选择 `.docx` 剧本 → 勾选导出格式 → 开始拆分。界面默认暗色，右上角可切浅色。
+双击 `script-splitter.exe`（界面标题仍为中文「剧本双语拆分工具」）→ 浏览选择 `.docx` 剧本 → 勾选导出格式 → 开始拆分。界面默认暗色；右上角两个色点切强调色（金 / 冷蓝），最右侧按钮切明暗。
 输出目录默认与源文件同级的 `<文件名>_split\`。
 
 ### 命令行
@@ -44,7 +44,7 @@ src/beautify.py   排版层：样式套用、清空白行、TOC 域、页边距�
 src/cli.py        命令行入口（无头 / 批处理）
 src/options.py    选项注册表（语种 / 导出格式，纯数据、不依赖界面框架）
 src/desktop_app.py 图形界面壳：pywebview 内嵌本地页面 + 内置 http 服务 + 原生能力桥接
-src/web/          界面页面：index.html / styles.css（暗色·浅色液态玻璃）/ app.js
+src/web/          界面页面：index.html / styles.css（暗/亮 × 金/冷蓝强调色，SFX Tools 工作台口径）/ app.js
 tests/            结构校验 + 冒烟测试
 ```
 

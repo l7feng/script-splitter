@@ -4,6 +4,7 @@
 
 | 日期 | 提交 | 说明 |
 | --- | --- | --- |
+| 2026-11-14 | 本地未提交 | ui: `src/web` 前端按 SFX Tools 视觉口径重写（面板体系 / 金·冷蓝 2 强调色 × 明暗 / 命令栏 + 状态检查器 + 日志坞）；`app_info` 增加 accent；导出勾选改为完整布尔表持久化 |
 | 2026-10-28 | `5a4356e` | Update script splitter build paths |
 | 2026-10-05 | `07401b7` | chore: 璺�寰勬敼鍙ｅ�归綈 D:/Ai-Files 鏂扮粨鏋勶紙椤圭洰39澶嶇洏锛� |
 | 2026-09-30 | `63e8b81` | ui: token涓夊眰鍖�+涓夊�楃晫闈㈡ā寮�(warm/cool/night)x寮鸿皟鑹茬儹鍒锋柊+鍏�椤规墦纾�; 澶嶇洏淇�澶�: build_exe琛�--icon涓�--add-data app.ico, 鍒犳湭鐢ㄥ�煎叆current_mode, 鏇存柊杩囨湡娉ㄩ噴 |

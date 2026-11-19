@@ -1,0 +1,58 @@
+/* ===================================================================
+   7F-IDW 设计系统 · 遗留别名层（迁移过渡专用，请勿在新项目使用）
+   -------------------------------------------------------------------
+   用途：把 sfx-tools 系的旧变量名（--bg / --panel / --raised / --line /
+   --text / --muted / --accent）映射到本规范的语义名，使已变量化的老仓
+   在不改 172 处 var() 引用的前提下，色值立即由单一真源控制。
+
+   引入顺序必须是：
+       tokens.css  →  legacy-alias.css  →  仓自己的 styles.css（仅剩尺寸/字体）
+
+   老仓的 :root 里必须删掉已由本文件接管的色值声明，否则双真源。
+   什么时候删掉这份文件：当该仓把 var(--bg) 这类引用全部改成
+   var(--surface-0) 这类语义名之后。它只是脚手架，不是永久资产。
+   =================================================================== */
+
+/* 选择器同时写 :root 和 body：老仓把 data-theme / data-accent 挂在 <body> 上时，
+   别名必须在该元素上重新绑定才能重新解析（否则 var() 在 :root 已固化，切换失效）。 */
+:root, body {
+  /* 表面 */
+  --bg: var(--surface-0);
+  --panel: var(--surface-1);
+  --raised: var(--surface-2);
+  --raised-2: var(--surface-1);        /* 原 #1c2128 与 --panel 几乎同值，合并 */
+  --raised-hover: var(--surface-hover);
+  --raised-active: var(--surface-active);
+
+  /* 边框 */
+  --line: var(--border-subtle);
+  --line-subtle: var(--border-subtle);
+  --line-strong: var(--border-strong);
+  --line-soft: var(--overlay-weak);
+
+  /* 文字 */
+  --text: var(--text-primary);
+  --muted: var(--text-secondary);
+
+  /* 半透明叠加：--overlay-weak / --overlay-strong 与规范同名，tokens.css 已直接提供，
+     此处不能自引用（否则循环失效），只需桥接名字不同的 --overlay 一项 */
+  --overlay: var(--overlay-base);
+
+  /* 状态 */
+  --danger: var(--status-danger);
+  --danger-line: var(--status-danger-line);
+  --warning: var(--status-warning);
+  --success: var(--status-success);
+
+  /* 强调：默认为 Action。若产品用「数据金」做主导，按下方 data-accent 覆盖。
+     注意：--accent 在旧仓里同时承担「能点的」和「数据」两种角色，
+     这是规范要纠正的历史问题，本文件先保功能，不改观感。 */
+  --accent: var(--action-base);
+  --accent-hover: var(--action-hover);
+  --accent-line: var(--action-line);
+  --accent-wash: var(--action-wash);
+}
+
+/* 旧仓的强调色切换：把具体色值改成引用语义 token，不再硬编码 */
+[data-accent="gold"] { --accent: var(--signal-base); }
+[data-accent="blue"] { --accent: var(--action-base); }

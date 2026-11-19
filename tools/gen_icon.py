@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""生成应用图标 src/app.ico（多分辨率 32bpp）。
+"""生成应用图标 assets/icons/app.ico（多分辨率 32bpp）。
 
 配色对齐新液态玻璃暗色主题：暖陶圆角渐变底 + 深棕 S，右上角一抹极淡青灰光斑，
 顶部一道玻璃高光；与界面顶栏品牌块同源。
@@ -12,7 +12,7 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC_ICO = os.path.join(ROOT, 'src', 'app.ico')
+SRC_ICO = os.path.join(ROOT, 'assets', 'icons', 'app.ico')
 
 S = 256
 TOP = (214, 167, 128)     # 暖陶上亮

@@ -28,13 +28,15 @@ SPEC = os.path.join(ROOT, 'build')
 
 NAME = 'script-splitter'  # 2026-09-27 由「剧本双语拆分工具」改英文：上 GitHub 需全 ASCII；GUI 标题仍为中文
 ENTRY = os.path.join(ROOT, 'src', 'desktop_app.py')
-ICON = os.path.join(ROOT, 'src', 'app.ico')
+ICON = os.path.join(ROOT, 'assets', 'icons', 'app.ico')
 
 # 打包后必须在 _internal 里存在的东西，缺一个 exe 就白屏或功能缺失
 MUST_HAVE = [
     os.path.join('web', 'index.html'),
     os.path.join('web', 'styles.css'),
     os.path.join('web', 'app.js'),
+    os.path.join('web', 'assets', 'tokens.css'),        # 7F-IDW 色值真源（缺则界面无色）
+    os.path.join('web', 'assets', 'legacy-alias.css'),  # 旧变量名映射（缺则控件透明）
     'VERSION',
     'app.ico',
     os.path.join('webview', 'lib', 'Microsoft.Web.WebView2.WinForms.dll'),
@@ -66,7 +68,7 @@ def main():
         '--hidden-import', 'clr_loader',
         # 页面资源 / 版本 / 图标打到 _internal 根（冻结后 _MEIPASS）
         '--add-data', os.path.join(ROOT, 'src', 'web') + os.pathsep + 'web',
-        '--add-data', os.path.join(ROOT, 'src', 'app.ico') + os.pathsep + '.',
+        '--add-data', os.path.join(ROOT, 'assets', 'icons', 'app.ico') + os.pathsep + '.',
         '--add-data', os.path.join(ROOT, 'VERSION') + os.pathsep + '.',
         '--distpath', STAGING,
         '--workpath', WORK,

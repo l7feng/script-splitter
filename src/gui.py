@@ -19,7 +19,7 @@ from theme import (setup_theme, initial_geometry, save_geometry, COLOR,
                    register_palette_hook,
                    FONT_BODY, FONT_SMALL, FONT_MONO)  # noqa: E402
 
-VERSION = '0.2.0'
+VERSION = '0.2.1'
 
 FORMATS = [
     ('csv', '三栏对照 CSV（集/场/角色/外语/中文）', True),
@@ -582,7 +582,7 @@ def main():
     root = TkinterDnD.Tk() if HAS_DND else tk.Tk()
     # 窗口图标（多分辨率 ico，生成脚本 tools/gen_icon.py；缺失则静默跳过）
     try:
-        root.iconbitmap(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'app.ico'))
+        root.iconbitmap(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'assets', 'icons', 'app.ico'))
     except Exception:
         pass
     app = App(root)

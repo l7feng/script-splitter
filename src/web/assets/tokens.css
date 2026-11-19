@@ -1,0 +1,359 @@
+/* ===================================================================
+   7F-IDW 设计系统 · Web 适配层（React / Tauri / HTML / Electron）
+   派生自 tokens/design-tokens.json，请勿在此文件中发明新值。
+   用法：<html data-theme="dark" data-accent="action">
+   =================================================================== */
+
+:root {
+  /* ---------- Layer 2 · Semantic · Surface ---------- */
+  --surface-0: #0d1015;   /* 窗口底 */
+  --surface-1: #14181f;   /* 面板、卡片 */
+  --surface-2: #1a1f28;   /* 控件底 */
+  --surface-3: #20262f;   /* 浮层、菜单、Tooltip */
+  --surface-hover: #242b35;  /* 控件 hover 底 */
+  --surface-active: #2b323d; /* 控件按下底 */
+  --surface-row: #171c24; /* 表格斑马行 */
+  --brand-plate: #0d1015; /* 品牌底板：Logo 底垫恒为深色，明暗两套下都不反转 */
+
+  /* ---------- Border ---------- */
+  --border-subtle: #242a34;
+  --border-strong: #333b47;
+  --border-hover: #414b59;
+  --border-focus: #a87c2c;
+
+  /* ---------- Text ---------- */
+  --text-primary: #dfe6f0;
+  --text-secondary: #97a3b6;
+  --text-tertiary: #6b7788;
+  --text-disabled: #4d5764;
+  --text-on-accent: #0d1015;
+
+  /* ---------- Accent · Action（能点的东西） ---------- */
+  --action-base: #6aa9e0;
+  --action-hover: #8fc2ec;
+  --action-pressed: #4d92cf;
+  --action-wash: #15283a;
+  --action-line: #2f6ea8;
+
+  /* ---------- Accent · Signal（数据本身） ---------- */
+  --signal-base: #d9a441;
+  --signal-bright: #e3b45a;
+  --signal-dim: #a87c2c;
+  --signal-watch: #3a2f1c;
+
+  /* ---------- Status ---------- */
+  --status-danger: #d4635c;
+  --status-danger-line: #a84943;
+  --status-danger-wash: #2a1a1a;
+  --status-warning: #e8c076;
+  --status-success: #8dcbb7;
+  --status-info: #6aa9e0;
+
+  /* ---------- Overlay ---------- */
+  --overlay-weak: #ffffff08;   /* 轻量叠加：行 hover、分区底 */
+  --overlay-base: #ffffff10;   /* 常规叠加 */
+  --overlay-strong: #ffffff1a; /* 强叠加：悬浮工具条 */
+  --scrim: #080a0cbb;
+  --shadow-lg: 0 24px 80px #00000088;
+  --shadow-sm: 0 4px 16px #00000055;
+
+  /* ---------- Typography ---------- */
+  --font-ui: "Microsoft YaHei UI", "Segoe UI", sans-serif;
+  --font-mono: "Consolas", "Cascadia Mono", monospace;
+  --fs-micro: 11px;
+  --fs-small: 12px;
+  --fs-body: 13px;
+  --fs-title: 15px;
+  --fs-stat: 20px;
+  --fs-display: 28px;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+
+  /* ---------- Space（4 的倍数，不许出现 5/7/10/13/15） ---------- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+
+  /* ---------- Radius（封顶 6px） ---------- */
+  --r-xs: 3px;
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-pill: 999px;
+
+  /* ---------- Stroke ---------- */
+  --stroke: 1px;
+
+  /* ---------- Density（compact 为桌面工具默认） ---------- */
+  --row-h: 22px;
+  --ctl-h: 24px;
+  --pad-y: 3px;
+  --pad-x: 6px;
+
+  /* ---------- Motion ---------- */
+  --dur-fast: 120ms;
+  --dur-base: 180ms;
+  --ease: cubic-bezier(0.2, 0, 0.2, 1);
+
+  color-scheme: dark;
+}
+
+/* 密度档：在根节点上加 data-density="default" / "comfortable" 切换 */
+[data-density="default"] {
+  --row-h: 26px;
+  --ctl-h: 28px;
+  --pad-y: 5px;
+  --pad-x: 9px;
+}
+[data-density="comfortable"] {
+  --row-h: 30px;
+  --ctl-h: 32px;
+  --pad-y: 7px;
+  --pad-x: 12px;
+}
+
+/* 浅色模式：仅文档类 / 打印类使用，桌面音频工具请不要开启 */
+[data-theme="light"] {
+  color-scheme: light;
+  --surface-0: #f4f3f0;
+  --surface-1: #fbfaf8;
+  --surface-2: #eeece7;
+  --surface-3: #ffffff;
+  --surface-hover: #e9e6e0;
+  --surface-active: #e2dfd8;
+  --surface-row: #f7f6f2;
+  --border-subtle: #dcd9d3;
+  --border-strong: #c5c1b9;
+  --border-hover: #b3aea5;
+  --border-focus: #8a6410;
+  --text-primary: #22262b;
+  --text-secondary: #5f6469;
+  --text-tertiary: #7d8288;
+  --text-disabled: #a8adb2;
+  --action-base: #2f6ea8;
+  --action-hover: #245c8e;
+  --action-pressed: #1c4a72;
+  --action-wash: #e3edf6;
+  --action-line: #a9c6df;
+  --signal-base: #9a6f14;
+  --signal-bright: #7d5a10;
+  --signal-dim: #8a6410;
+  --signal-watch: #f5ecd7;
+  --status-danger: #b3352a;
+  --status-success: #1f7a63;
+  --status-warning: #8a6410;
+  --overlay-weak: #00000009;
+  --overlay-base: #00000012;
+  --overlay-strong: #00000020;
+  --scrim: #14161959;
+}
+
+/* ===================================================================
+   基础元素：只做一件事——让裸 HTML 看起来已经是这个家族的
+   =================================================================== */
+
+html, body {
+  margin: 0;
+  background: var(--surface-0);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 数值、路径、时间码：加 .mono 就对了 */
+.mono, code, kbd, samp, pre, time, .num {
+  font-family: var(--font-mono);
+}
+
+/* ---------- Card ---------- */
+.card {
+  background: var(--surface-1);
+  border: var(--stroke) solid var(--border-subtle);
+  border-radius: var(--r-md);
+  padding: var(--sp-4);
+}
+
+/* ---------- Button ---------- */
+.btn {
+  height: var(--ctl-h);
+  padding: 0 var(--sp-3);
+  background: var(--surface-2);
+  border: var(--stroke) solid var(--border-strong);
+  border-radius: var(--r-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease),
+              color var(--dur-fast) var(--ease),
+              border-color var(--dur-fast) var(--ease);
+}
+.btn:hover { background: var(--surface-3); color: var(--text-primary); border-color: var(--border-hover); }
+.btn:active { background: var(--surface-1); }
+.btn:disabled { background: var(--surface-1); border-color: var(--border-subtle); color: var(--text-disabled); cursor: not-allowed; }
+
+/* 主按钮：洗底 + 描边 + 彩色字。不要做成实心彩色块。 */
+.btn--primary {
+  background: var(--action-wash);
+  border-color: var(--action-line);
+  color: var(--action-base);
+}
+.btn--primary:hover { background: #1b3448; border-color: var(--action-base); color: var(--action-hover); }
+.btn--primary:disabled { background: var(--surface-1); border-color: var(--border-subtle); color: var(--text-disabled); }
+
+.btn--danger {
+  background: transparent;
+  border-color: var(--status-danger-line);
+  color: var(--status-danger);
+}
+.btn--danger:hover { background: var(--status-danger-wash); border-color: var(--status-danger); }
+
+.btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-tertiary);
+  padding: 0 var(--sp-2);
+}
+.btn--ghost:hover { background: var(--surface-2); color: var(--text-primary); }
+
+/* ---------- Input ---------- */
+.input, input[type="text"], input[type="search"], input[type="number"], select, textarea {
+  height: var(--ctl-h);
+  padding: 0 var(--sp-3);
+  background: var(--surface-2);
+  border: var(--stroke) solid var(--border-subtle);
+  border-radius: var(--r-sm);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+.input::placeholder, input::placeholder { color: var(--text-tertiary); }
+.input:focus, input:focus, select:focus, textarea:focus { border-color: var(--border-focus); }
+.input[aria-invalid="true"] { border-color: var(--status-danger); }
+
+/* ---------- Table ---------- */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface-1);
+  border: var(--stroke) solid var(--border-subtle);
+  border-radius: var(--r-sm);
+  font-size: var(--fs-body);
+}
+.table th {
+  height: var(--row-h);
+  padding: 0 var(--sp-2);
+  background: var(--surface-0);
+  border-right: var(--stroke) solid var(--border-subtle);
+  border-bottom: var(--stroke) solid var(--border-subtle);
+  color: var(--text-tertiary);
+  font-size: var(--fs-micro);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.4px;
+  text-align: left;
+}
+.table td {
+  height: var(--row-h);
+  padding: 0 var(--sp-2);
+  border-bottom: var(--stroke) solid var(--border-subtle);
+  color: var(--text-primary);
+}
+.table tbody tr:nth-child(even) { background: var(--surface-row); }
+.table tbody tr.is-selected { background: var(--signal-watch); }
+
+/* ---------- Badge ---------- */
+.badge {
+  display: inline-block;
+  padding: 3px var(--sp-2);
+  background: var(--surface-2);
+  border: var(--stroke) solid var(--border-strong);
+  border-radius: var(--r-pill);
+  color: var(--text-secondary);
+  font-size: var(--fs-micro);
+  line-height: 1.5;
+}
+.badge--success { color: var(--status-success); border-color: var(--status-success); }
+.badge--warning { color: var(--status-warning); border-color: var(--status-warning); }
+.badge--danger  { color: var(--status-danger);  border-color: var(--status-danger-line); }
+
+/* ---------- Tooltip ---------- */
+.tooltip {
+  background: var(--surface-3);
+  border: var(--stroke) solid var(--border-strong);
+  border-radius: var(--r-sm);
+  padding: var(--sp-1) var(--sp-2);
+  color: var(--text-primary);
+  font-size: var(--fs-micro);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---------- Slider ---------- */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 3px;
+  background: var(--surface-3);
+  border-radius: var(--r-xs);
+  outline: none;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--text-secondary);
+  cursor: pointer;
+}
+.slider:hover::-webkit-slider-thumb { background: var(--signal-base); }
+
+/* ---------- Checkbox ---------- */
+.checkbox {
+  appearance: none;
+  width: 14px; height: 14px;
+  background: var(--surface-2);
+  border: var(--stroke) solid var(--border-strong);
+  border-radius: var(--r-xs);
+  cursor: pointer;
+  position: relative;
+}
+.checkbox:checked {
+  background: var(--signal-dim);
+  border-color: var(--signal-base);
+}
+.checkbox:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px; top: 1px;
+  width: 5px; height: 9px;
+  border-right: 1.5px solid var(--surface-0);
+  border-bottom: 1.5px solid var(--surface-0);
+  transform: rotate(40deg);
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #333b47; border-radius: var(--r-sm); }
+::-webkit-scrollbar-thumb:hover { background: #46505f; }
+::-webkit-scrollbar-corner { background: transparent; }
+
+/* ---------- 面板标题 ---------- */
+.section-title {
+  color: var(--text-tertiary);
+  font-size: var(--fs-micro);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 1.2px;
+}
+
+/* ---------- 焦点态：全局统一 ---------- */
+:focus-visible {
+  outline: var(--stroke) solid var(--border-focus);
+  outline-offset: 2px;
+}

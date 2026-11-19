@@ -2,8 +2,9 @@
 """剧本双语拆分 · 桌面 Web 壳（pywebview + 内嵌本地页面）。
 
 架构：Python 后端复用 core / styles / beautify 业务逻辑；界面是 src/web 下的
-本地 HTML/CSS/JS（液态玻璃暗色主题），经内置 http 服务喂给 WebView2 内嵌窗口。
-Python 原生能力（文件/目录对话框、拆分执行、打开目录）通过 js_api 暴露给前端。
+本地 HTML/CSS/JS（SFX Tools 工作台口径：暗/亮 × 4 强调色），经内置 http 服务
+喂给 WebView2 内嵌窗口。Python 原生能力（文件/目录对话框、拆分执行、打开目录）
+通过 js_api 暴露给前端。
 
 无头 / 批处理仍走 cli.py；本模块只负责图形界面壳，不 import tkinter。
 """
@@ -21,7 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from core import run  # noqa: E402
 from styles import list_templates  # noqa: E402
-from options import FORMATS, LANGS  # noqa: E402
+from options import FORMATS, LANGS, FORMAT_KEYS  # noqa: E402
 
 import webview  # noqa: E402
 
@@ -41,6 +42,16 @@ def _resource_root():
     if meipass:
         return meipass
     return os.path.dirname(os.path.abspath(__file__))
+
+
+def _icon_path():
+    """冻结包取打包到根目录的 app.ico；源码运行取 assets/icons/app.ico。"""
+    for candidate in (os.path.join(_resource_root(), 'app.ico'),
+                      os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                   'assets', 'icons', 'app.ico')):
+        if os.path.isfile(candidate):
+            return candidate
+    return ''
 
 
 def web_root():
@@ -89,7 +100,7 @@ def read_version():
                 return f.read().strip()
         except Exception:
             continue
-    return '0.2.0'
+    return '0.2.1'
 
 
 VERSION = read_version()
@@ -186,6 +197,7 @@ class Api:
             'langs': LANGS,
             'settings': {
                 'theme': s.get('theme', 'dark'),
+                'accent': s.get('accent', 'blue'),
                 'lang': s.get('lang', 'auto'),
                 'only_body': s.get('only_body', True),
                 'strip_rev': s.get('strip_rev', True),
@@ -247,7 +259,7 @@ class Api:
             'beautify': bool(opts.get('beautify', True)),
             'toc': bool(opts.get('toc', True)),
             'hf': bool(opts.get('hf', True)),
-            'fmts': {k: True for k in (opts.get('formats') or [])},
+            'fmts': {k: k in (opts.get('formats') or []) for k in FORMAT_KEYS},
             'out_dir': opts.get('out_dir') or '',
         })
 
@@ -346,7 +358,7 @@ def main():
         width=1120,
         height=780,
         min_size=(960, 640),
-        background_color='#162023',
+        background_color='#0d1015',  # 7F-IDW surface-0（真源 design-tokens.json → surface.0）
         text_select=True,
     )
     api.bind_window(window)
@@ -356,7 +368,7 @@ def main():
     try:
         webview.start(private_mode=False, storage_path=storage,
                       gui='edgechromium',
-                      icon=os.path.join(_resource_root(), 'app.ico'))
+                      icon=_icon_path())
     except Exception as e:
         print('[fallback] pywebview 启动失败 (%s)，转 Edge --app' % e)
         return 0 if run_browser_app(url) else 1

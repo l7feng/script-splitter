@@ -4,105 +4,172 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>剧本双语拆分工具</title>
+  <link rel="stylesheet" href="assets/tokens.css">
+  <link rel="stylesheet" href="assets/legacy-alias.css">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body data-theme="dark">
-  <!-- 背景光斑（液态玻璃氛围层） -->
-  <div class="blob b1"></div>
-  <div class="blob b2"></div>
-  <div class="blob b3"></div>
+<body data-theme="dark" data-accent="blue">
+<div class="app-shell">
 
-  <header class="topbar">
-    <div class="brand">
-      <img class="brand-mark" src="logo.png" alt="" aria-hidden="true">
-      <div class="brand-text">
-        <h1>剧本双语拆分</h1>
-        <span class="ver" id="appVersion">v0.2.0</span>
+  <header class="workspace-header">
+    <div class="workspace-navigation">
+      <div class="compact-brand">
+        <img class="brand-mark" src="brand.png" alt="Script Splitter" aria-hidden="true">
+        <span class="brand-rule" aria-hidden="true"></span>
+        <strong>剧本双语拆分</strong>
+        <span class="app-version" id="appVersion">v0.2.1</span>
+      </div>
+      <nav aria-label="设置分区">
+        <button type="button" data-jump="panelSplit" aria-current="page">拆分</button>
+        <button type="button" data-jump="panelLayout">排版</button>
+        <button type="button" data-jump="panelFormats">导出</button>
+        <button type="button" data-jump="panelOutput">输出</button>
+      </nav>
+      <div class="header-actions">
+        <div class="theme-swatches" role="group" aria-label="强调色">
+          <button type="button" class="theme-swatch" data-accent="gold" title="金色" aria-pressed="false"></button>
+          <button type="button" class="theme-swatch" data-accent="blue" title="冷蓝" aria-pressed="true"></button>
+        </div>
+        <button type="button" class="header-button" id="themeToggle">浅色</button>
       </div>
     </div>
-    <button class="btn secondary sm" id="themeToggle" title="切换暗色 / 浅色">◐ 浅色</button>
+
+    <div class="workspace-commandbar">
+      <div class="path-field">
+        <span class="path-tag" aria-hidden="true">DOCX</span>
+        <input id="filePath" type="text" readonly placeholder="选择 .docx 剧本">
+        <button type="button" class="path-button" id="browseFile">浏览…</button>
+      </div>
+      <span class="command-summary" id="fmtSummary">CSV</span>
+      <div class="command-actions">
+        <button type="button" class="primary" id="startBtn">开始拆分</button>
+        <button type="button" class="plain" id="openOut">打开输出</button>
+      </div>
+    </div>
   </header>
 
-  <!-- 主区：表单卡片（可折叠）+ 固定操作行 -->
-  <main class="workspace">
-    <div class="form-area">
-      <div class="cards">
-
-      <section class="card collapsible wide" data-card="file">
-        <button class="card-head" type="button" aria-expanded="true">
-          <h2 class="card-title">剧本文件</h2>
-          <span class="chev" aria-hidden="true">▾</span>
-        </button>
-        <div class="card-body">
-          <div class="row">
-            <input id="filePath" class="input" type="text" readonly placeholder="选择 .docx 剧本">
-            <button class="btn secondary" id="browseFile">浏览…</button>
-          </div>
-          <p class="tip" id="fileTip">把 .docx 路径填入，或点「浏览…」选择剧本</p>
+  <div class="workspace-body">
+    <section class="browser">
+      <div class="library-strip">
+        <div class="library-title">
+          <h1>拆分设置</h1>
+          <span id="fileSummary">未选择文件</span>
         </div>
-      </section>
-
-      <section class="card collapsible" data-card="opts">
-        <button class="card-head" type="button" aria-expanded="true">
-          <h2 class="card-title">选项</h2>
-          <span class="chev" aria-hidden="true">▾</span>
-        </button>
-        <div class="card-body">
-          <div class="field-group" id="langRow"></div>
-          <label class="check"><input type="checkbox" id="onlyBody"> 只处理分集正文（跳过大纲 / 人物小传）</label>
-          <label class="check"><input type="checkbox" id="stripRev"> 清除删除线与修订痕迹</label>
+        <div class="library-meta">
+          <span class="mono" id="optionSummary">自动识别 · 中文短剧</span>
         </div>
-      </section>
-
-      <section class="card collapsible" data-card="tpl">
-        <button class="card-head" type="button" aria-expanded="true">
-          <h2 class="card-title">排版（作用于 docx）</h2>
-          <span class="chev" aria-hidden="true">▾</span>
-        </button>
-        <div class="card-body">
-          <div class="field-group" id="tplRow"></div>
-          <label class="check"><input type="checkbox" id="beautify"> 美化排版（清空行 / 字体字号 / 行距）</label>
-          <label class="check"><input type="checkbox" id="toc"> 插入目录（打开后 Ctrl+A 再 F9）</label>
-          <label class="check"><input type="checkbox" id="hf"> 页眉页脚（剧名 + 页码）</label>
-        </div>
-      </section>
-
-      <section class="card collapsible" data-card="fmt">
-        <button class="card-head" type="button" aria-expanded="true">
-          <h2 class="card-title">导出格式（默认 CSV）</h2>
-          <span class="chev" aria-hidden="true">▾</span>
-        </button>
-        <div class="card-body">
-          <div class="check-list" id="fmtList"></div>
-        </div>
-      </section>
-
-      <section class="card collapsible wide" data-card="out">
-        <button class="card-head" type="button" aria-expanded="true">
-          <h2 class="card-title">输出目录</h2>
-          <span class="chev" aria-hidden="true">▾</span>
-        </button>
-        <div class="card-body">
-          <div class="row">
-            <input id="outDir" class="input" type="text" placeholder="留空 = 与源文件同目录">
-            <button class="btn secondary" id="browseDir">选择…</button>
-          </div>
-        </div>
-      </section>
-
       </div>
 
-      <div class="actions">
-        <button class="btn accent" id="startBtn">开始拆分</button>
-        <button class="btn secondary" id="openOut">打开输出目录</button>
-        <div class="progress" id="progress" hidden><div class="bar"></div></div>
-      </div>
-    </div>
-  </main>
+      <div class="settings-scroll" id="settingsScroll">
 
-  <!-- 底部日志坞：默认收起，点横条展开 -->
+        <section class="panel" id="panelSplit">
+          <div class="panel-heading">
+            <strong><i class="panel-index">01</i>拆分选项</strong>
+            <span class="mono">SPLIT</span>
+          </div>
+          <div class="panel-body">
+            <p class="field-label">外语语种</p>
+            <div class="chip-row" id="langRow">
+              <label class="chip is-on"><input type="radio" name="lang" value="auto" checked><i class="chip-dot" aria-hidden="true"></i><span>自动识别</span></label>
+              <label class="chip"><input type="radio" name="lang" value="pt"><i class="chip-dot" aria-hidden="true"></i><span>葡萄牙语</span></label>
+              <label class="chip"><input type="radio" name="lang" value="en"><i class="chip-dot" aria-hidden="true"></i><span>英语</span></label>
+            </div>
+            <div class="check-stack">
+              <label class="check-row"><input type="checkbox" id="onlyBody" checked><span>只处理分集正文（跳过大纲 / 人物小传）</span></label>
+              <label class="check-row"><input type="checkbox" id="stripRev" checked><span>清除删除线与修订痕迹</span></label>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panelLayout">
+          <div class="panel-heading">
+            <strong><i class="panel-index">02</i>排版</strong>
+            <span class="mono">DOCX ONLY</span>
+          </div>
+          <div class="panel-body">
+            <p class="field-label">排版模板（作用于 .docx 输出）</p>
+            <div class="chip-row" id="tplRow">
+              <label class="chip is-on"><input type="radio" name="template" value="cn" checked><i class="chip-dot" aria-hidden="true"></i><span>中文短剧阅读版</span></label>
+              <label class="chip"><input type="radio" name="template" value="hollywood"><i class="chip-dot" aria-hidden="true"></i><span>好莱坞标准格式</span></label>
+            </div>
+            <div class="check-stack">
+              <label class="check-row"><input type="checkbox" id="beautify" checked><span>美化排版（清空行 / 字体字号 / 行距）</span></label>
+              <label class="check-row"><input type="checkbox" id="toc" checked><span>插入目录域（Word 里 Ctrl+A 再 F9 刷新）</span></label>
+              <label class="check-row"><input type="checkbox" id="hf" checked><span>页眉页脚（剧名 + 页码）</span></label>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel panel-wide" id="panelFormats">
+          <div class="panel-heading">
+            <strong><i class="panel-index">03</i>导出格式</strong>
+            <span class="mono" id="fmtCount">1 / 9</span>
+          </div>
+          <div class="panel-body">
+            <div class="fmt-grid" id="fmtList">
+              <label class="fmt-row"><input type="checkbox" value="csv" checked><code>csv</code><span title="三栏对照 CSV（集/场/角色/外语/中文）">三栏对照 CSV</span></label>
+              <label class="fmt-row"><input type="checkbox" value="zh_docx"><code>zh_docx</code><span title="中文版 .docx（完整剧本，套排版模板）">中文版 .docx</span></label>
+              <label class="fmt-row"><input type="checkbox" value="foreign_docx"><code>foreign_docx</code><span title="外语版 .docx（台词本，上字幕用）">外语版 .docx</span></label>
+              <label class="fmt-row"><input type="checkbox" value="bilingual_docx"><code>bilingual_docx</code><span title="双语对照版 .docx（中文 + 外语原文）">双语对照版 .docx</span></label>
+              <label class="fmt-row"><input type="checkbox" value="foreign_txt"><code>foreign_txt</code><span title="外语版 .txt">外语版 .txt</span></label>
+              <label class="fmt-row"><input type="checkbox" value="zh_txt"><code>zh_txt</code><span title="中文版 .txt">中文版 .txt</span></label>
+              <label class="fmt-row"><input type="checkbox" value="srt"><code>srt</code><span title="外语台词 .srt（上字幕）">外语台词 .srt</span></label>
+              <label class="fmt-row"><input type="checkbox" value="missing"><code>missing</code><span title="缺翻译清单 .txt">缺翻译清单</span></label>
+              <label class="fmt-row"><input type="checkbox" value="stats"><code>stats</code><span title="台词统计表 .csv（角色 / 分集）">台词统计表</span></label>
+            </div>
+            <p class="panel-note">CSV 为默认导出；docx 类格式才会套用排版模板。</p>
+          </div>
+        </section>
+
+        <section class="panel panel-wide" id="panelOutput">
+          <div class="panel-heading">
+            <strong><i class="panel-index">04</i>输出目录</strong>
+            <span class="mono">OUTPUT</span>
+          </div>
+          <div class="panel-body">
+            <div class="path-row">
+              <input id="outDir" type="text" placeholder="留空 = 与源文件同目录下的 _split">
+              <button type="button" id="browseDir">选择…</button>
+            </div>
+            <p class="panel-note">留空时输出到源文件旁的 <code>&lt;剧本名&gt;_split</code>；运行后可直接在右侧结果里打开文件。</p>
+          </div>
+        </section>
+
+      </div>
+    </section>
+
+    <aside class="inspector">
+      <div class="panel-heading">
+        <span>运行状态</span>
+        <span class="mono" id="runPhase">READY</span>
+      </div>
+      <div class="inspector-content">
+        <p class="run-line" id="runLine">就绪</p>
+        <p class="run-note" id="runNote">选择剧本后点「开始拆分」。</p>
+        <div class="progress" id="progress" hidden><span class="bar"></span></div>
+
+        <dl class="detail-list">
+          <div><dt>源文件</dt><dd id="ddFile" title="">—</dd></div>
+          <div><dt>输出目录</dt><dd id="ddOut" title="">同级 _split</dd></div>
+          <div><dt>语种</dt><dd id="ddLang">自动识别</dd></div>
+          <div><dt>模板</dt><dd id="ddTpl">中文短剧</dd></div>
+          <div><dt>导出</dt><dd id="ddFmt">1 项</dd></div>
+        </dl>
+
+        <p class="warn-line" id="warnLine" hidden></p>
+
+        <div class="detail-section">
+          <h3>输出结果<span class="mono" id="resultCount">0</span></h3>
+          <ul class="result-list" id="resultList">
+            <li class="result-empty">暂无输出</li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+  </div>
+
   <section class="log-dock" id="logDock">
-    <button class="log-bar" id="logBar" type="button" aria-expanded="false">
+    <button type="button" class="log-bar" id="logBar" aria-expanded="false">
       <span class="log-dot" id="logDot"></span>
       <span class="log-label">运行日志</span>
       <span class="log-preview" id="logPreview">暂无日志</span>
@@ -111,12 +178,20 @@
     </button>
     <div class="log-panel" id="logPanel" hidden>
       <div class="log-toolbar">
-        <button class="btn secondary sm" id="clearLog" type="button">清空日志</button>
+        <span class="mono" id="logMeta">0 行</span>
+        <button type="button" id="clearLog">清空日志</button>
       </div>
       <div class="log" id="log" aria-live="polite"></div>
     </div>
   </section>
 
-  <script src="app.js"></script>
+  <footer class="statusbar">
+    <span id="statusText">就绪</span>
+    <span class="status-note">本地处理 · 文件不出本机</span>
+    <span class="status-version" id="statusVersion">v0.2.1</span>
+  </footer>
+
+</div>
+<script src="app.js"></script>
 </body>
 </html>
